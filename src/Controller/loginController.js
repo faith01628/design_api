@@ -1,4 +1,5 @@
 const { executeQuery } = require('../database');
+const { generateToken } = require('../auth');
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -32,10 +33,13 @@ const login = async (req, res) => {
             });
         }
 
+        const token = generateToken(foundUser);
+        // await saveOrUpdateToken(foundUser.id, token);
+
         return res.status(200).json({
             result: 1,
             message: 'Login successful',
-            data: { user: foundUser },
+            data: { user: foundUser, token },
         });
 
     } catch (error) {

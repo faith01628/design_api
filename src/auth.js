@@ -21,7 +21,7 @@ const authenticateToken = (req, res, next) => {
 
 const authenticateAdminToken = (req, res, next) => {
     authenticateToken(req, res, () => {
-        if (req.user && req.user.role === true) {
+        if (req.user && req.user.role === "admin") {
             next();
         } else {
             return res.status(403).json({ error: 'Unauthorized' });
@@ -31,7 +31,7 @@ const authenticateAdminToken = (req, res, next) => {
 
 const authenticateBothTokens = (req, res, next) => {
     authenticateToken(req, res, () => {
-        if (req.user && (req.user.role === true || req.user.role === false)) {
+        if (req.user && (req.user.role === "admin" || req.user.role === "user")) {
             next();
         } else {
             return res.status(403).json({ error: 'Unauthorized' });
@@ -41,7 +41,7 @@ const authenticateBothTokens = (req, res, next) => {
 
 const authenticateUserToken = (req, res, next) => {
     authenticateToken(req, res, () => {
-        if (req.user && req.user.role === false) {
+        if (req.user && req.user.role === "user") {
             next();
         } else {
             return res.status(403).json({ error: 'Unauthorized' });
@@ -49,20 +49,18 @@ const authenticateUserToken = (req, res, next) => {
     });
 };
 
-// function generateToken(user) {
-//     const token = jwt.sign(
-//         {
-//             id: user.id,
-//             username: user.username,
-//             email: user.email,
-//             phone: user.phone,
-//             role: user.role,
-//             tokenid: user.tokenid
-//         },
-//         secretKey
-//     );
-//     return token;
-// }
+function generateToken(user) {
+    const token = jwt.sign(
+        {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+        },
+        secretKey
+    );
+    return token;
+}
 
 function verifyToken(token) {
     try {
@@ -73,7 +71,7 @@ function verifyToken(token) {
 }
 
 module.exports = {
-    // generateToken,
+    generateToken,
     verifyToken,
     authenticateToken,
     authenticateAdminToken,
