@@ -8,6 +8,7 @@ const login = async (req, res) => {
             return res.status(400).json({
                 result: 2,
                 message: 'Missing required fields: email or password',
+                data: [],
             });
         }
 
@@ -19,6 +20,7 @@ const login = async (req, res) => {
             return res.status(404).json({
                 result: 3,
                 message: 'User not found',
+                data: [],
             });
         }
 
@@ -30,6 +32,7 @@ const login = async (req, res) => {
             return res.status(401).json({
                 result: 4,
                 message: 'Wrong password',
+                data: [],
             });
         }
 

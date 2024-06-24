@@ -2,16 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { executeQuery } = require('../database');
 
-const getUserData = async (req, res) => {
+const getInfoUserData = async (req, res) => {
     try {
-        // const query = 'SELECT * FROM account';
-        const query = 'SELECT account.id, account.username, account.password, account.email, account.role, info.fullname, info.avata, info.background, info.bod FROM account LEFT JOIN info ON account.id = info.accountId';
-        const userData = await executeQuery(query);
+        const query = 'SELECT * FROM info';
+        const infoData = await executeQuery(query);
 
         res.status(200).json({
             result: 1,
             message: 'Get user data successfully',
-            data: userData,
+            data: infoData,
         });
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -23,13 +22,13 @@ const getUserData = async (req, res) => {
     }
 };
 
-const getUserById = async (req, res) => {
+const getInfoUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const query = 'SELECT account.id, account.username, account.password, account.email, account.role, info.fullname, info.avata, info.background, info.bod FROM account LEFT JOIN info ON account.id = info.accountId WHERE account.id = ?';
-        const userData = await executeQuery(query, [id]);
+        const query = 'SELECT * FROM info WHERE id = ?';
+        const infoData = await executeQuery(query, [id]);
 
-        if (userData.length === 0) {
+        if (infoData.length === 0) {
             return res.status(404).json({
                 result: 3,
                 message: 'User not found',
@@ -40,7 +39,7 @@ const getUserById = async (req, res) => {
         res.status(200).json({
             result: 1,
             message: 'Get user data successfully',
-            data: userData[0],
+            data: infoData[0],
         });
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -52,29 +51,18 @@ const getUserById = async (req, res) => {
     }
 };
 
-const createUser = async (req, res) => {
+const createInfoUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        let { role } = req.body;
+        const { accountId, fullname, avata, background, bod } = req.body;
 
-        role = "user";
-
-        if (!username || !email || !password) {
-            return res.status(400).json({
-                result: 2,
-                message: 'Missing required fields',
-                data: [],
-            });
-        }
-
-        const query = 'INSERT INTO account SET ?';
-        const params = { username, email, password, role };
+        const query = 'INSERT INTO info SET ?';
+        const params = { accountId, fullname, avata, background, bod };
         await executeQuery(query, params);
 
         res.status(200).json({
             result: 1,
-            message: 'Create user successfully',
-            data: { username, email, password, role },
+            message: 'Create info user successfully',
+            data: { accountId, fullname, avata, background, bod },
         });
     } catch (error) {
         res.status(500).json({
@@ -85,14 +73,14 @@ const createUser = async (req, res) => {
     }
 };
 
-const deleteUser = async (req, res) => {
+const deleteinfoUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const query = 'DELETE FROM account WHERE id = ?';
+        const query = 'DELETE FROM info WHERE id = ?';
         await executeQuery(query, [id]);
         res.status(200).json({
             result: 1,
-            message: 'Delete user successfully',
+            message: 'Delete info user successfully',
             data: { id },
         });
     } catch (error) {
@@ -105,17 +93,17 @@ const deleteUser = async (req, res) => {
     }
 };
 
-const updateUser = async (req, res) => {
+const updateinfoUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { username, email, password } = req.body;
-        const query = 'UPDATE account SET username = ?, email = ?, password = ? WHERE id = ?';
-        const params = [username, email, password, id];
+        const { accountId, fullname, avata, background, bod } = req.body;
+        const query = 'UPDATE info SET accountId = ?, fullname = ?, avata = ?, background = ?, bod = ? WHERE id = ?';
+        const params = [accountId, fullname, avata, background, bod, id];
         await executeQuery(query, params);
         res.status(200).json({
             result: 1,
-            message: 'Update user successfully',
-            data: { id, username, email, password },
+            message: 'Update info user successfully',
+            data: { id, accountId, fullname, avata, background, bod },
         });
     } catch (error) {
         console.error('Error updating user:', error);
@@ -127,4 +115,6 @@ const updateUser = async (req, res) => {
     }
 };
 
-module.exports = { getUserData, createUser, deleteUser, getUserById, updateUser };
+module.exports = {
+    getInfoUserData, getInfoUserById, createInfoUser, deleteinfoUser, updateinfoUser
+};
