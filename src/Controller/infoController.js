@@ -53,16 +53,20 @@ const getInfoUserById = async (req, res) => {
 
 const createInfoUser = async (req, res) => {
     try {
-        const { accountId, fullname, avata, background, bod } = req.body;
+        const { avata, background } = req.files;
+        const { accountId, fullname, bod } = req.body;
+
+        const avataPath = avata ? avata[0].path : null;
+        const backgroundPath = background ? background[0].path : null;
 
         const query = 'INSERT INTO info SET ?';
-        const params = { accountId, fullname, avata, background, bod };
+        const params = { accountId, fullname, avata: avataPath, background: backgroundPath, bod };
         await executeQuery(query, params);
 
         res.status(200).json({
             result: 1,
             message: 'Create info user successfully',
-            data: { accountId, fullname, avata, background, bod },
+            data: { accountId, fullname, avata: avataPath, background: backgroundPath, bod },
         });
     } catch (error) {
         res.status(500).json({
@@ -96,9 +100,14 @@ const deleteinfoUser = async (req, res) => {
 const updateinfoUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { accountId, fullname, avata, background, bod } = req.body;
+        const { avata, background } = req.files;
+
+        const avataPath = avata ? avata[0].path : null;
+        const backgroundPath = background ? background[0].path : null;
+
+        const { accountId, fullname, bod } = req.body;
         const query = 'UPDATE info SET accountId = ?, fullname = ?, avata = ?, background = ?, bod = ? WHERE id = ?';
-        const params = [accountId, fullname, avata, background, bod, id];
+        const params = [accountId, fullname, avataPath, backgroundPath, bod, id];
         await executeQuery(query, params);
         res.status(200).json({
             result: 1,

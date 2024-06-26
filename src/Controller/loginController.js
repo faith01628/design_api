@@ -1,5 +1,6 @@
 const { executeQuery } = require('../database');
 const { generateToken } = require('../auth');
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -24,8 +25,6 @@ const login = async (req, res) => {
             });
         }
 
-        // console.log(users);
-
         const foundUser = users[0];
 
         if (foundUser.password !== password) {
@@ -37,7 +36,20 @@ const login = async (req, res) => {
         }
 
         const token = generateToken(foundUser);
-        // await saveOrUpdateToken(foundUser.id, token);
+
+        const checkTokenQuery = 'SELECT * FROM token WHERE accountid = ?';
+        const checkTokenParams = [foundUser.id];
+        const existingTokens = await executeQuery(checkTokenQuery, checkTokenParams);
+
+        if (existingTokens.length > 0) {
+            const updateTokenQuery = 'UPDATE token SET token = ?, status = 1 WHERE accountid = ?';
+            const updateTokenParams = [token, foundUser.id];
+            await executeQuery(updateTokenQuery, updateTokenParams);
+        } else {
+            const insertTokenQuery = 'INSERT INTO token (accountid, token, status) VALUES (?, ?, 1)';
+            const insertTokenParams = [foundUser.id, token];
+            await executeQuery(insertTokenQuery, insertTokenParams);
+        }
 
         return res.status(200).json({
             result: 1,

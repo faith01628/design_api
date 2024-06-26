@@ -53,16 +53,16 @@ const getLinkById = async (req, res) => {
 
 const createLink = async (req, res) => {
     try {
-        const { profileid, link } = req.body;
+        const { profileid, title, link, indexid } = req.body;
 
         const query = 'INSERT INTO link SET ?';
-        const params = { profileid, link };
+        const params = { profileid, title, link, indexid };
         await executeQuery(query, params);
 
         res.status(200).json({
             result: 1,
             message: 'Create link successfully',
-            data: { profileid, link },
+            data: { profileid, title, link, indexid },
         });
     } catch (error) {
         res.status(500).json({
@@ -96,14 +96,14 @@ const deleteLink = async (req, res) => {
 const updateLink = async (req, res) => {
     try {
         const { id } = req.params;
-        const { profileid, link } = req.body;
-        const query = 'UPDATE link SET profileid = ?, link = ? WHERE id = ?';
-        const params = [profileid, link, id];
+        const { profileid, title, link, indexid } = req.body;
+        const query = 'UPDATE link SET profileid = ?, title = ?, link = ?, indexid = ? WHERE id = ?';
+        const params = [profileid, title, link, indexid, id];
         await executeQuery(query, params);
         res.status(200).json({
             result: 1,
             message: 'Update profile successfully',
-            data: { id, profileid, link },
+            data: { id, profileid, title, link, indexid },
         });
     } catch (error) {
         console.error('Error updating profile:', error);

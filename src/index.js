@@ -4,20 +4,46 @@ const app = express();
 const port = 3000;
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+app.use(express.static(path.join(__dirname, '../')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-//connect controller
+// connect controller
 const { authenticateAdminToken, authenticateBothTokens, authenticateUserToken } = require('./auth');
 const { getUserData, createUser, deleteUser, getUserById, updateUser } = require('./Controller/accountController');
 const { login } = require('./Controller/loginController');
 const { getInfoUserData, getInfoUserById, createInfoUser, deleteinfoUser, updateinfoUser } = require('./Controller/infoController');
 const { getProfileData, createProfile, deleteProfile, updateProfile, getProfileById } = require('./Controller/profileController.js');
 const { getLink, getLinkById, createLink, deleteLink, updateLink } = require('./Controller/linkController.js');
+const { getImg, create } = require('./Controller/imgController.js');
 
-//connect route
+// up 1 file
+app.post('/img', upload.single('img'), create);
+
+// up 2 trường và mỗi trường được 10 file
+// app.post('/img', upload.fields([{ name: 'file', maxCount: 10 }, { name: 'img', maxCount: 10 }]), create);
+
+//up 10 file trong 1 trường
+// app.post('/img', upload.array('img', 10), create);
+
+app.get('/getimg', getImg);
+
+// connect route
 app.get('/users', authenticateAdminToken, getUserData);
 app.post('/createuser', createUser);
 app.delete('/deleteuser/:id', authenticateAdminToken, deleteUser);
@@ -26,15 +52,15 @@ app.put('/updateuser/:id', authenticateAdminToken, updateUser);
 
 app.get('/info', authenticateAdminToken, getInfoUserData);
 app.get('/info/:id', authenticateBothTokens, getInfoUserById);
-app.post('/createinfo', authenticateBothTokens, createInfoUser);
+app.post('/createinfo', upload.fields([{ name: 'avata' }, { name: 'background' }]), authenticateBothTokens, createInfoUser);
 app.delete('/deleteinfo/:id', authenticateAdminToken, deleteinfoUser);
-app.put('/updateinfo/:id', authenticateBothTokens, updateinfoUser);
+app.put('/updateinfo/:id', upload.fields([{ name: 'avata' }, { name: 'background' }]), authenticateBothTokens, updateinfoUser);
 
 app.get('/profile', authenticateAdminToken, getProfileData);
-app.get('/profile/:id', authenticateBothTokens, getProfileById);
-app.post('/createprofile', authenticateBothTokens, createProfile);
+app.get('/profilebyid', authenticateBothTokens, getProfileById);
+app.post('/createprofile', upload.fields([{ name: 'avata' }, { name: 'background' }, { name: 'backgroundavata' }]), authenticateBothTokens, createProfile);
 app.delete('/deleteprofile/:id', authenticateAdminToken, deleteProfile);
-app.put('/updateprofile/:id', authenticateBothTokens, updateProfile);
+app.put('/updateprofile/:id', upload.fields([{ name: 'avata' }, { name: 'background' }, { name: 'backgroundavata' }]), authenticateBothTokens, updateProfile);
 
 app.get('/link', authenticateAdminToken, getLink);
 app.get('/link/:id', authenticateBothTokens, getLinkById);

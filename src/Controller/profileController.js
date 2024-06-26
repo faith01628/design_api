@@ -24,14 +24,16 @@ const getProfileData = async (req, res) => {
 
 const getProfileById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const query = 'SELECT * FROM profile WHERE id = ?';
-        const profileData = await executeQuery(query, [id]);
+        const { accountid } = req.headers; // Retrieve accountid from headers
+        // console.log('accountid:', accountid); // Check if accountid is received
+
+        const query = 'SELECT * FROM profile WHERE accountid = ?';
+        const profileData = await executeQuery(query, [accountid]);
 
         if (profileData.length === 0) {
             return res.status(404).json({
                 result: 3,
-                message: 'profile not found',
+                message: 'Profile not found',
                 data: [],
             });
         }
@@ -53,16 +55,21 @@ const getProfileById = async (req, res) => {
 
 const createProfile = async (req, res) => {
     try {
-        const { accountid, avata, background, fullname, introduce } = req.body;
+        const { avata, backgroundavata, background } = req.files;
+        const { accountid, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+
+        const avataPath = avata ? avata[0].path : null;
+        const backgroundPath = background ? background[0].path : null;
+        const backgroundavataPath = backgroundavata ? backgroundavata[0].path : null;
 
         const query = 'INSERT INTO profile SET ?';
-        const params = { accountid, avata, background, fullname, introduce };
+        const params = { accountid, avata: avataPath, backgroundavata: backgroundavataPath, background: backgroundPath, fullname, phone, address, bod, introduce, herfid, profileid };
         await executeQuery(query, params);
 
         res.status(200).json({
             result: 1,
             message: 'Create profile user successfully',
-            data: { accountid, avata, background, fullname, introduce },
+            data: { accountid, avata, backgroundavata, background, fullname, phone, address, bod, introduce, herfid, profileid },
         });
     } catch (error) {
         res.status(500).json({
@@ -96,14 +103,20 @@ const deleteProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const { id } = req.params;
-        const { accountId, avata, background, fullname, introduce } = req.body;
-        const query = 'UPDATE profile SET accountId = ?, avata = ?, background = ?,, fullname = ? introduce = ? WHERE id = ?';
-        const params = [accountId, avata, background, fullname, introduce, id];
+        const { avata, background, backgroundavata } = req.files;
+        const { accountId, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+
+        const avataPath = avata ? avata[0].path : null;
+        const backgroundPath = background ? background[0].path : null;
+        const backgroundavataPath = backgroundavata ? backgroundavata[0].path : null;
+
+        const query = 'UPDATE profile SET accountId = ?, avata = ?, backgroundavata = ?, background = ?, fullname = ?, bod = ?, introduce = ? herfid=? profileid=? WHERE id = ?';
+        const params = [accountId, avataPath, backgroundPath, backgroundavataPath, fullname, phone, address, bod, introduce, herfid, profileid, id];
         await executeQuery(query, params);
         res.status(200).json({
             result: 1,
             message: 'Update profile successfully',
-            data: { id, accountId, avata, background, fullname, introduce },
+            data: { id, accountId, avata, background, fullname, phone, address, bod, introduce, herfid, profileid },
         });
     } catch (error) {
         console.error('Error updating profile:', error);
