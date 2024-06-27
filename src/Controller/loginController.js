@@ -1,5 +1,6 @@
 const { executeQuery } = require('../database');
 const { generateToken } = require('../auth');
+const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
     try {
@@ -27,7 +28,8 @@ const login = async (req, res) => {
 
         const foundUser = users[0];
 
-        if (foundUser.password !== password) {
+        const passwordMatch = await bcrypt.compare(password, foundUser.password);
+        if (!passwordMatch) {
             return res.status(401).json({
                 result: 4,
                 message: 'Wrong password',

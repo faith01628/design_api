@@ -62,6 +62,26 @@ const createProfile = async (req, res) => {
         const backgroundPath = background ? background[0].path : null;
         const backgroundavataPath = backgroundavata ? backgroundavata[0].path : null;
 
+        const queryCheck = 'SELECT * FROM profile WHERE herfid = ?';
+        const profileData = await executeQuery(queryCheck, [herfid]);
+        if (profileData.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'herfid already exists',
+                data: [],
+            });
+        }
+
+        const queryCheck2 = 'SELECT * FROM profile WHERE profileid = ?';
+        const profileData2 = await executeQuery(queryCheck2, [profileid]);
+        if (profileData2.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'profileid already exists',
+                data: [],
+            });
+        }
+
         const query = 'INSERT INTO profile SET ?';
         const params = { accountid, avata: avataPath, backgroundavata: backgroundavataPath, background: backgroundPath, fullname, phone, address, bod, introduce, herfid, profileid };
         await executeQuery(query, params);
@@ -105,6 +125,26 @@ const updateProfile = async (req, res) => {
         const { id } = req.params;
         const { avata, background, backgroundavata } = req.files;
         const { accountId, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+
+        const queryCheck = 'SELECT * FROM profile WHERE herfid = ?';
+        const profileData = await executeQuery(queryCheck, [herfid]);
+        if (profileData.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'herfid already exists',
+                data: [],
+            });
+        }
+
+        const queryCheck2 = 'SELECT * FROM profile WHERE profileid = ?';
+        const profileData2 = await executeQuery(queryCheck2, [profileid]);
+        if (profileData2.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'profileid already exists',
+                data: [],
+            });
+        }
 
         const avataPath = avata ? avata[0].path : null;
         const backgroundPath = background ? background[0].path : null;

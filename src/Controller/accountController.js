@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { executeQuery } = require('../database');
+const bcrypt = require('bcrypt');
 
 const getUserData = async (req, res) => {
     try {
@@ -67,8 +68,36 @@ const createUser = async (req, res) => {
             });
         }
 
+        const queryemail = 'SELECT * FROM account WHERE email = ?';
+        const paramsemail = [email];
+        const users = await executeQuery(queryemail, paramsemail);
+
+        if (users.length > 0) {
+            return res.status(409).json({
+                result: 3,
+                message: 'Email already exists',
+                data: [],
+            });
+        }
+
+        const queryusername = 'SELECT * FROM account WHERE username = ?';
+        const paramsusername = [username];
+        const usernames = await executeQuery(queryusername, paramsusername);
+
+        if (usernames.length > 0) {
+            return res.status(409).json({
+                result: 3,
+                message: 'Username already exists',
+                data: [],
+            });
+        }
+
+        // Mã hóa mật khẩu
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         const query = 'INSERT INTO account SET ?';
-        const params = { username, email, password, role };
+        const params = { username, email, password: hashedPassword, role };
         await executeQuery(query, params);
 
         res.status(200).json({
@@ -77,6 +106,7 @@ const createUser = async (req, res) => {
             data: { username, email, password, role },
         });
     } catch (error) {
+        console.error('Error creating user:', error);
         res.status(500).json({
             result: 0,
             message: 'Internal server error',
@@ -109,13 +139,87 @@ const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const { username, email, password } = req.body;
-        const query = 'UPDATE account SET username = ?, email = ?, password = ? WHERE id = ?';
-        const params = [username, email, password, id];
-        await executeQuery(query, params);
+
+        // Truy vấn thông tin hiện tại của người dùng
+        const queryUser = 'SELECT * FROM account WHERE id = ?';
+        const paramsUser = [id];
+        const user = await executeQuery(queryUser, paramsUser);
+
+        if (user.length === 0) {
+            return res.status(404).json({
+                result: 2,
+                message: 'User not found',
+                data: [],
+            });
+        }
+
+        const currentUser = user[0];
+
+        // Kiểm tra xem email hoặc username mới có khác với giá trị hiện tại không
+        if (email && email !== currentUser.email) {
+            const queryEmail = 'SELECT * FROM account WHERE email = ?';
+            const paramsEmail = [email];
+            const users = await executeQuery(queryEmail, paramsEmail);
+
+            if (users.length > 0) {
+                return res.status(409).json({
+                    result: 3,
+                    message: 'Email already exists',
+                    data: [],
+                });
+            }
+        }
+
+        if (username && username !== currentUser.username) {
+            const queryUsername = 'SELECT * FROM account WHERE username = ?';
+            const paramsUsername = [username];
+            const usernames = await executeQuery(queryUsername, paramsUsername);
+
+            if (usernames.length > 0) {
+                return res.status(409).json({
+                    result: 3,
+                    message: 'Username already exists',
+                    data: [],
+                });
+            }
+        }
+
+        // Chỉ mã hóa mật khẩu nếu có mật khẩu mới được cung cấp
+        let hashedPassword = currentUser.password;
+        if (password) {
+            const saltRounds = 10;
+            hashedPassword = await bcrypt.hash(password, saltRounds);
+        }
+
+        // Tạo câu lệnh cập nhật động
+        const updateFields = [];
+        const updateParams = [];
+
+        if (username && username !== currentUser.username) {
+            updateFields.push('username = ?');
+            updateParams.push(username);
+        }
+
+        if (email && email !== currentUser.email) {
+            updateFields.push('email = ?');
+            updateParams.push(email);
+        }
+
+        if (password) {
+            updateFields.push('password = ?');
+            updateParams.push(hashedPassword);
+        }
+
+        if (updateFields.length > 0) {
+            const query = `UPDATE account SET ${updateFields.join(', ')} WHERE id = ?`;
+            updateParams.push(id);
+            await executeQuery(query, updateParams);
+        }
+
         res.status(200).json({
             result: 1,
             message: 'Update user successfully',
-            data: { id, username, email, password },
+            data: { id, username, password, email },
         });
     } catch (error) {
         console.error('Error updating user:', error);
