@@ -5,7 +5,6 @@ const { executeQuery } = require('../database');
 const viewUser = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('id:', id);
 
         let query = '';
         let userData;
