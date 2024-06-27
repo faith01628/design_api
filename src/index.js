@@ -31,6 +31,7 @@ const { getInfoUserData, getInfoUserById, createInfoUser, deleteinfoUser, update
 const { getProfileData, createProfile, deleteProfile, updateProfile, getProfileById } = require('./Controller/profileController.js');
 const { getLink, getLinkById, createLink, deleteLink, updateLink } = require('./Controller/linkController.js');
 const { getImg, create } = require('./Controller/imgController.js');
+const { viewUser } = require('./Controller/viewUserController.js');
 
 // up 1 file
 app.post('/img', upload.single('img'), create);
@@ -67,6 +68,8 @@ app.get('/link/:id', authenticateBothTokens, getLinkById);
 app.post('/createlink', authenticateBothTokens, createLink);
 app.delete('/deletelink/:id', authenticateAdminToken, deleteLink);
 app.put('/updatelink/:id', authenticateBothTokens, updateLink);
+
+app.get('/viewuser/:id', viewUser);
 
 app.post('/login', login);
 
