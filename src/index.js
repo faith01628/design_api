@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+// const localtunnel = require('localtunnel');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -15,6 +16,18 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
+
+// (async () => {
+//     const tunnel = await localtunnel({ port: 3000 });
+
+//     // the assigned public url for your tunnel
+//     // i.e. https://abcdefgjhij.localtunnel.me
+//     tunnel.url;
+
+//     tunnel.on('close', () => {
+//         // tunnels are closed
+//     });
+// })();
 
 const upload = multer({ storage: storage });
 

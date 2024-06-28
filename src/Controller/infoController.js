@@ -59,6 +59,16 @@ const createInfoUser = async (req, res) => {
         const avataPath = avata ? avata[0].path : null;
         const backgroundPath = background ? background[0].path : null;
 
+        const queryCheck3 = 'SELECT * FROM info WHERE accountid = ?';
+        const profileData3 = await executeQuery(queryCheck3, [accountId]);
+        if (profileData3.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'Profile already exists',
+                data: [],
+            });
+        }
+
         const query = 'INSERT INTO info SET ?';
         const params = { accountId, fullname, avata: avataPath, background: backgroundPath, bod };
         await executeQuery(query, params);
@@ -104,6 +114,8 @@ const updateinfoUser = async (req, res) => {
 
         const avataPath = avata ? avata[0].path : null;
         const backgroundPath = background ? background[0].path : null;
+
+
 
         const { accountId, fullname, bod } = req.body;
         const query = 'UPDATE info SET accountId = ?, fullname = ?, avata = ?, background = ?, bod = ? WHERE id = ?';

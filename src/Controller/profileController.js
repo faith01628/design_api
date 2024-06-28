@@ -22,6 +22,7 @@ const getProfileData = async (req, res) => {
     }
 };
 
+
 const getProfileById = async (req, res) => {
     try {
         const { accountid } = req.headers; // Retrieve accountid from headers
@@ -56,11 +57,22 @@ const getProfileById = async (req, res) => {
 const createProfile = async (req, res) => {
     try {
         const { avata, backgroundavata, background } = req.files;
-        const { accountid, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+        const { fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+        const { accountid } = req.headers;
 
         const avataPath = avata ? avata[0].path : null;
         const backgroundPath = background ? background[0].path : null;
         const backgroundavataPath = backgroundavata ? backgroundavata[0].path : null;
+
+        const queryCheck3 = 'SELECT * FROM profile WHERE accountid = ?';
+        const profileData3 = await executeQuery(queryCheck3, [accountid]);
+        if (profileData3.length > 0) {
+            return res.status(400).json({
+                result: 2,
+                message: 'Profile already exists',
+                data: [],
+            });
+        }
 
         const queryCheck = 'SELECT * FROM profile WHERE herfid = ?';
         const profileData = await executeQuery(queryCheck, [herfid]);
@@ -124,7 +136,7 @@ const updateProfile = async (req, res) => {
     try {
         const { id } = req.params;
         const { avata, background, backgroundavata } = req.files;
-        const { accountId, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
+        const { accountid, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
 
         const queryCheck = 'SELECT * FROM profile WHERE herfid = ?';
         const profileData = await executeQuery(queryCheck, [herfid]);
@@ -146,17 +158,92 @@ const updateProfile = async (req, res) => {
             });
         }
 
-        const avataPath = avata ? avata[0].path : null;
-        const backgroundPath = background ? background[0].path : null;
-        const backgroundavataPath = backgroundavata ? backgroundavata[0].path : null;
+        // Fetch current profile data
+        const currentProfileQuery = 'SELECT * FROM profile WHERE id = ?';
+        const currentProfile = await executeQuery(currentProfileQuery, [id]);
+        if (currentProfile.length === 0) {
+            return res.status(404).json({
+                result: 0,
+                message: 'Profile not found',
+                data: [],
+            });
+        }
 
-        const query = 'UPDATE profile SET accountId = ?, avata = ?, backgroundavata = ?, background = ?, fullname = ?, bod = ?, introduce = ? herfid=? profileid=? WHERE id = ?';
-        const params = [accountId, avataPath, backgroundPath, backgroundavataPath, fullname, phone, address, bod, introduce, herfid, profileid, id];
-        await executeQuery(query, params);
+        // Determine which fields to update
+        let updateFields = [];
+        let updateValues = [];
+
+        if (accountid) {
+            updateFields.push('accountid = ?');
+            updateValues.push(accountid);
+        }
+        if (fullname) {
+            updateFields.push('fullname = ?');
+            updateValues.push(fullname);
+        }
+        if (phone) {
+            updateFields.push('phone = ?');
+            updateValues.push(phone);
+        }
+        if (address) {
+            updateFields.push('address = ?');
+            updateValues.push(address);
+        }
+        if (bod) {
+            updateFields.push('bod = ?');
+            updateValues.push(bod);
+        }
+        if (introduce) {
+            updateFields.push('introduce = ?');
+            updateValues.push(introduce);
+        }
+        if (herfid) {
+            updateFields.push('herfid = ?');
+            updateValues.push(herfid);
+        }
+        if (profileid) {
+            updateFields.push('profileid = ?');
+            updateValues.push(profileid);
+        }
+        if (avata && avata[0].path !== currentProfile[0].avata) {
+            updateFields.push('avata = ?');
+            updateValues.push(avata[0].path);
+        }
+        if (background && background[0].path !== currentProfile[0].background) {
+            updateFields.push('background = ?');
+            updateValues.push(background[0].path);
+        }
+        if (backgroundavata && backgroundavata[0].path !== currentProfile[0].backgroundavata) {
+            updateFields.push('backgroundavata = ?');
+            updateValues.push(backgroundavata[0].path);
+        }
+
+        if (updateFields.length === 0) {
+            return res.status(400).json({
+                result: 0,
+                message: 'No changes detected',
+                data: [],
+            });
+        }
+
+        const query = `UPDATE profile SET ${updateFields.join(', ')} WHERE id = ?`;
+        updateValues.push(id);
+
+        console.log('Executing query with params:', query, updateValues);
+        const result = await executeQuery(query, updateValues);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                result: 0,
+                message: 'Profile not found or no changes made',
+                data: [],
+            });
+        }
+
         res.status(200).json({
             result: 1,
             message: 'Update profile successfully',
-            data: { id, accountId, avata, background, fullname, phone, address, bod, introduce, herfid, profileid },
+            data: { id, accountid, avata: avata ? avata[0].path : currentProfile[0].avata, background: background ? background[0].path : currentProfile[0].background, backgroundavata: backgroundavata ? backgroundavata[0].path : currentProfile[0].backgroundavata, fullname, phone, address, bod, introduce, herfid, profileid },
         });
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -167,6 +254,9 @@ const updateProfile = async (req, res) => {
         });
     }
 };
+
+
+
 
 module.exports = {
     getProfileData, getProfileById, createProfile, deleteProfile, updateProfile
