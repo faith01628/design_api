@@ -45,6 +45,7 @@ const { getProfileData, createProfile, deleteProfile, updateProfile, getProfileB
 const { getLink, getLinkById, createLink, deleteLink, updateLink } = require('./Controller/linkController.js');
 const { getImg, create } = require('./Controller/imgController.js');
 const { viewUser } = require('./Controller/viewUserController.js');
+const { getApi, getApiById, createApi, deleteApi, updateApi, updateActiveOn, updateActiveOff } = require('./Controller/apiController.js');
 
 // up 1 file
 app.post('/img', upload.single('img'), create);
@@ -54,6 +55,15 @@ app.post('/img', upload.single('img'), create);
 
 //up 10 file trong 1 trường
 // app.post('/img', upload.array('img', 10), create);
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../src/view/html/login.html'));
+})
+
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, '../src/view/html/home.html'));
+})
+
 
 app.get('/getimg', getImg);
 
@@ -77,12 +87,20 @@ app.delete('/deleteprofile/:id', authenticateAdminToken, deleteProfile);
 app.put('/updateprofile/:id', upload.fields([{ name: 'avata' }, { name: 'background' }, { name: 'backgroundavata' }]), authenticateBothTokens, updateProfile);
 
 app.get('/link', authenticateAdminToken, getLink);
-app.get('/link/:id', authenticateBothTokens, getLinkById);
+app.get('/linkbydi', authenticateBothTokens, getLinkById);
 app.post('/createlink', authenticateBothTokens, createLink);
 app.delete('/deletelink/:id', authenticateAdminToken, deleteLink);
 app.put('/updatelink/:id', authenticateBothTokens, updateLink);
 
 app.get('/viewuser/:id', viewUser);
+
+app.get('/api', authenticateAdminToken, getApi);
+app.get('/api/:id', authenticateAdminToken, getApiById);
+app.post('/createapi', authenticateAdminToken, createApi);
+app.delete('/deleteapi/:id', authenticateAdminToken, deleteApi);
+app.put('/updateapi/:id', authenticateAdminToken, updateApi);
+app.put('/activeOn/:id', authenticateAdminToken, updateActiveOn);
+app.put('/activeOff/:id', authenticateAdminToken, updateActiveOff);
 
 app.post('/login', login);
 

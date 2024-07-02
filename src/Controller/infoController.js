@@ -4,6 +4,32 @@ const { executeQuery } = require('../database');
 
 const getInfoUserData = async (req, res) => {
     try {
+
+        let idapi = 6;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const query = 'SELECT * FROM info';
         const infoData = await executeQuery(query);
 
@@ -24,6 +50,31 @@ const getInfoUserData = async (req, res) => {
 
 const getInfoUserById = async (req, res) => {
     try {
+        let idapi = 7;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const query = 'SELECT * FROM info WHERE id = ?';
         const infoData = await executeQuery(query, [id]);
@@ -53,6 +104,31 @@ const getInfoUserById = async (req, res) => {
 
 const createInfoUser = async (req, res) => {
     try {
+        let idapi = 8;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { avata, background } = req.files;
         const { accountId, fullname, bod } = req.body;
 
@@ -78,6 +154,7 @@ const createInfoUser = async (req, res) => {
             message: 'Create info user successfully',
             data: { accountId, fullname, avata: avataPath, background: backgroundPath, bod },
         });
+
     } catch (error) {
         res.status(500).json({
             result: 0,
@@ -89,9 +166,35 @@ const createInfoUser = async (req, res) => {
 
 const deleteinfoUser = async (req, res) => {
     try {
+        let idapi = 9;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const query = 'DELETE FROM info WHERE id = ?';
         await executeQuery(query, [id]);
+
         res.status(200).json({
             result: 1,
             message: 'Delete info user successfully',
@@ -109,6 +212,31 @@ const deleteinfoUser = async (req, res) => {
 
 const updateinfoUser = async (req, res) => {
     try {
+        let idapi = 10;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const { avata, background } = req.files;
 
@@ -126,6 +254,8 @@ const updateinfoUser = async (req, res) => {
             message: 'Update info user successfully',
             data: { id, accountId, fullname, avata, background, bod },
         });
+
+
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({

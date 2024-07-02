@@ -4,6 +4,31 @@ const { executeQuery } = require('../database');
 
 const getLink = async (req, res) => {
     try {
+        let idapi = 16;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const query = 'SELECT * FROM link';
         const linkData = await executeQuery(query);
 
@@ -12,6 +37,7 @@ const getLink = async (req, res) => {
             message: 'Get link successfully',
             data: linkData,
         });
+
     } catch (error) {
         console.error('Error fetching link:', error);
         res.status(500).json({
@@ -24,9 +50,35 @@ const getLink = async (req, res) => {
 
 const getLinkById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const query = 'SELECT * FROM link WHERE id = ?';
-        const linkData = await executeQuery(query, [id]);
+
+        let idapi = 17;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
+        const { profileid } = req.body;
+        const query = 'SELECT * FROM link WHERE profileid = ?';
+        const linkData = await executeQuery(query, [profileid]);
 
         if (linkData.length === 0) {
             return res.status(404).json({
@@ -41,6 +93,8 @@ const getLinkById = async (req, res) => {
             message: 'Get link successfully',
             data: linkData[0],
         });
+
+
     } catch (error) {
         console.error('Error fetching link:', error);
         res.status(500).json({
@@ -53,6 +107,32 @@ const getLinkById = async (req, res) => {
 
 const createLink = async (req, res) => {
     try {
+
+        let idapi = 18;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { profileid, title, link, indexid } = req.body;
 
         const query = 'INSERT INTO link SET ?';
@@ -64,6 +144,7 @@ const createLink = async (req, res) => {
             message: 'Create link successfully',
             data: { profileid, title, link, indexid },
         });
+
     } catch (error) {
         res.status(500).json({
             result: 0,
@@ -75,6 +156,32 @@ const createLink = async (req, res) => {
 
 const deleteLink = async (req, res) => {
     try {
+
+        let idapi = 19;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const query = 'DELETE FROM link WHERE id = ?';
         await executeQuery(query, [id]);
@@ -83,6 +190,7 @@ const deleteLink = async (req, res) => {
             message: 'Delete link successfully',
             data: { id },
         });
+
     } catch (error) {
         console.error('Error deleting link:', error);
         res.status(500).json({
@@ -95,6 +203,32 @@ const deleteLink = async (req, res) => {
 
 const updateLink = async (req, res) => {
     try {
+
+        let idapi = 20;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const { profileid, title, link, indexid } = req.body;
         const query = 'UPDATE link SET profileid = ?, title = ?, link = ?, indexid = ? WHERE id = ?';
@@ -105,6 +239,7 @@ const updateLink = async (req, res) => {
             message: 'Update profile successfully',
             data: { id, profileid, title, link, indexid },
         });
+
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(500).json({

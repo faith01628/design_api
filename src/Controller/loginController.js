@@ -4,6 +4,32 @@ const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
     try {
+
+        let idapi = 22;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { email, password } = req.body;
 
         if (!email || !password) {

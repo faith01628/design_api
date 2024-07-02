@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý API - Trang Chủ</title>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            /* Added for positioning the logout button */
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #45a049;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-bar select {
+            width: 20%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 17px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 13px;
+            width: 13px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(13px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <button class="logout-button" onclick="handleLogout()">Logout</button>
+        <h1>Quản lý API</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search API..." onkeyup="handleSearch()">
+            <select id="methodSelect" onchange="handleSearch()">
+                <option value="">All Methods</option>
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+        </div>
+        <table id="apiTable">
+            <thead>
+                <tr>
+                    <th>API</th>
+                    <th>Method</th>
+                    <th>Accesses</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu API sẽ được tải bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let apiData = []; // To store the fetched API data
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                console.error('Token not found');
+                return;
+            }
+
+            fetch('http://localhost:3000/api', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    apiData = data.data; // Store the fetched data
+                    renderTable(apiData); // Render the table with the fetched data
+                })
+                .catch(error => {
+                    console.error('Error fetching API data:', error);
+                });
+        });
+
+        function renderTable(data) {
+            console.log('Rendering table with data:', data);
+
+            const apiTable = document.getElementById('apiTable').getElementsByTagName('tbody')[0];
+            apiTable.innerHTML = ''; // Clear the existing table data
+
+            data.forEach(api => {
+                console.log('Rendering row for API:', api);
+
+                const row = apiTable.insertRow();
+                row.id = `row-${api.id}`; // Assign an id to each row for easy targeting
+
+                const cellApi = row.insertCell();
+                cellApi.textContent = api.api;
+
+                const cellMethod = row.insertCell();
+                cellMethod.textContent = api.method;
+
+                const cellAccesses = row.insertCell();
+                cellAccesses.textContent = api.accesses;
+
+                const cellActive = row.insertCell();
+                const toggleLabel = document.createElement('label');
+                toggleLabel.classList.add('switch');
+                const toggleInput = document.createElement('input');
+                toggleInput.type = 'checkbox';
+                toggleInput.id = `toggle-${api.id}`;
+                toggleInput.checked = api.status && api.status.toString('hex') === '0000';
+                // Assuming status is stored as '0000'
+                toggleInput.onchange = () => {
+                    console.log('Toggle change detected for API:', api);
+                    handleToggleChange(event, api.id);
+                };
+                const toggleSpan = document.createElement('span');
+                toggleSpan.classList.add('slider', 'round');
+
+                toggleLabel.appendChild(toggleInput);
+                toggleLabel.appendChild(toggleSpan);
+                cellActive.appendChild(toggleLabel);
+            });
+        }
+
+
+
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const methodSelect = document.getElementById('methodSelect').value;
+
+            let filteredData = apiData;
+
+            if (methodSelect) {
+                filteredData = filteredData.filter(api => api.method === methodSelect);
+            }
+
+            if (searchInput) {
+                filteredData = filteredData.filter(api => api.api.toLowerCase().includes(searchInput));
+            }
+
+            renderTable(filteredData); // Render the table with the filtered data
+        }
+
+        function handleToggleChange(event, apiId) {
+            const isChecked = event.target.checked;
+            const token = localStorage.getItem('token');
+            const url = isChecked ? `http://localhost:3000/activeOn/${apiId}` : `http://localhost:3000/activeOff/${apiId}`;
+
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.result !== 1) {
+                        // Revert the switch state if update failed
+                        event.target.checked = !isChecked;
+                        console.error(`Failed to update switch state for API ${apiId}:`, data);
+                    } else {
+                        console.log(`Switch for API ${apiId} is now ${isChecked ? 'ON' : 'OFF'}`, data);
+
+                        // Update UI to reflect the new state
+                        const apiTable = document.getElementById('apiTable').getElementsByTagName('tbody')[0];
+                        const row = apiTable.querySelector(`#row-${apiId}`);
+                        if (row) {
+                            const switchCell = row.querySelector('.switch');
+                            if (switchCell) {
+                                const checkbox = switchCell.querySelector('input[type="checkbox"]');
+                                if (checkbox) {
+                                    checkbox.checked = isChecked;
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    // Revert the switch state if there was an error
+                    event.target.checked = !isChecked;
+                    console.error(`Error updating switch state for API ${apiId}:`, error);
+                });
+        }
+
+
+        function handleLogout() {
+            localStorage.removeItem('token'); // Remove the token
+            window.location.replace('http://localhost:3000/');
+        }
+    </script>
+</body>
+
+</html>

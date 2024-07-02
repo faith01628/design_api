@@ -4,6 +4,32 @@ const { executeQuery } = require('../database');
 
 const getProfileData = async (req, res) => {
     try {
+
+        let idapi = 11;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const query = 'SELECT * FROM profile';
         const profileData = await executeQuery(query);
 
@@ -12,6 +38,7 @@ const getProfileData = async (req, res) => {
             message: 'Get profile data successfully',
             data: profileData,
         });
+
     } catch (error) {
         console.error('Error fetching profile data:', error);
         res.status(500).json({
@@ -25,6 +52,32 @@ const getProfileData = async (req, res) => {
 
 const getProfileById = async (req, res) => {
     try {
+
+        let idapi = 12;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { accountid } = req.headers; // Retrieve accountid from headers
         // console.log('accountid:', accountid); // Check if accountid is received
 
@@ -44,6 +97,7 @@ const getProfileById = async (req, res) => {
             message: 'Get user profile successfully',
             data: profileData[0],
         });
+
     } catch (error) {
         console.error('Error fetching profile data:', error);
         res.status(500).json({
@@ -56,6 +110,32 @@ const getProfileById = async (req, res) => {
 
 const createProfile = async (req, res) => {
     try {
+
+        let idapi = 13;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { avata, backgroundavata, background } = req.files;
         const { fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
         const { accountid } = req.headers;
@@ -103,6 +183,7 @@ const createProfile = async (req, res) => {
             message: 'Create profile user successfully',
             data: { accountid, avata, backgroundavata, background, fullname, phone, address, bod, introduce, herfid, profileid },
         });
+
     } catch (error) {
         res.status(500).json({
             result: 0,
@@ -114,6 +195,32 @@ const createProfile = async (req, res) => {
 
 const deleteProfile = async (req, res) => {
     try {
+
+        let idapi = 14;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const query = 'DELETE FROM profile WHERE id = ?';
         await executeQuery(query, [id]);
@@ -122,6 +229,7 @@ const deleteProfile = async (req, res) => {
             message: 'Delete profile profile successfully',
             data: { id },
         });
+
     } catch (error) {
         console.error('Error deleting profile:', error);
         res.status(500).json({
@@ -134,6 +242,32 @@ const deleteProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
+
+        let idapi = 15;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const { avata, background, backgroundavata } = req.files;
         const { accountid, fullname, phone, address, bod, introduce, herfid, profileid } = req.body;
@@ -245,6 +379,7 @@ const updateProfile = async (req, res) => {
             message: 'Update profile successfully',
             data: { id, accountid, avata: avata ? avata[0].path : currentProfile[0].avata, background: background ? background[0].path : currentProfile[0].background, backgroundavata: backgroundavata ? backgroundavata[0].path : currentProfile[0].backgroundavata, fullname, phone, address, bod, introduce, herfid, profileid },
         });
+
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(500).json({

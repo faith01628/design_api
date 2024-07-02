@@ -5,10 +5,35 @@ const bcrypt = require('bcrypt');
 
 const getUserData = async (req, res) => {
     try {
+
+        let idapi = 1;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         // const query = 'SELECT * FROM account';
         const query = 'SELECT account.id, account.username, account.password, account.email, account.role, info.fullname, info.avata, info.background, info.bod FROM account LEFT JOIN info ON account.id = info.accountId';
         const userData = await executeQuery(query);
-
         res.status(200).json({
             result: 1,
             message: 'Get user data successfully',
@@ -26,6 +51,33 @@ const getUserData = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
+
+        let idapi = 2;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
+
         const { id } = req.params;
         const query = 'SELECT account.id, account.username, account.password, account.email, account.role, info.fullname, info.avata, info.background, info.bod FROM account LEFT JOIN info ON account.id = info.accountId WHERE account.id = ?';
         const userData = await executeQuery(query, [id]);
@@ -55,6 +107,32 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
+
+        let idapi = 5;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { username, email, password } = req.body;
         let { role } = req.body;
 
@@ -100,6 +178,7 @@ const createUser = async (req, res) => {
         const params = { username, email, password: hashedPassword, role };
         await executeQuery(query, params);
 
+
         res.status(200).json({
             result: 1,
             message: 'Create user successfully',
@@ -117,14 +196,35 @@ const createUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
+        let idapi = 3;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const query = 'DELETE FROM account WHERE id = ?';
         await executeQuery(query, [id]);
-        res.status(200).json({
-            result: 1,
-            message: 'Delete user successfully',
-            data: { id },
-        });
+
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).json({
@@ -137,6 +237,32 @@ const deleteUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
+        let idapi = 4;
+        const getapi = 'SELECT * FROM api WHERE id = ?';
+        const api = await executeQuery(getapi, [idapi]);
+
+        if (api.length === 0) {
+            return res.status(404).json({
+                result: 3,
+                message: 'API not found',
+                data: [],
+            });
+        }
+
+        const apiStatus = api[0].status.toString('hex');
+
+        if (apiStatus === '0000') {
+            return res.status(401).json({
+                result: 0,
+                message: 'API has been blocked',
+                data: [],
+            });
+        } else {
+            const updateAccessQuery = 'UPDATE api SET accesses = accesses + 1 WHERE id = ?';
+            const updateAccessParams = [idapi];
+            await executeQuery(updateAccessQuery, updateAccessParams);
+        }
+
         const { id } = req.params;
         const { username, email, password } = req.body;
 
@@ -215,6 +341,7 @@ const updateUser = async (req, res) => {
             updateParams.push(id);
             await executeQuery(query, updateParams);
         }
+
 
         res.status(200).json({
             result: 1,
