@@ -5,10 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý API - Trang Chủ</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         /* CSS styles */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Arial', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             background-color: #f0f0f0;
@@ -31,7 +35,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: #4CAF50;
+            background-color: #e03636;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -40,7 +44,7 @@
         }
 
         .logout-button:hover {
-            background-color: #45a049;
+            background-color: #b02a2a;
         }
 
         h1 {
@@ -54,7 +58,7 @@
         }
 
         .search-bar input[type="text"] {
-            width: 70%;
+            width: 60%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -65,6 +69,11 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+        }
+
+        .search-bar button {
+            width: 15%;
+            padding: 10px;
         }
 
         table {
@@ -140,6 +149,34 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        .custom-create-button {
+            /* Thêm các thuộc tính CSS tùy chỉnh cho nút Create ở đây */
+            background-color: #1dbbd7;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .custom-create-button:hover {
+            background-color: #0f9aa7;
+        }
+
+        .custom-edit-button {
+            /* Thêm các thuộc tính CSS tùy chỉnh cho nút Edit ở đây */
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .custom-edit-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 
@@ -156,6 +193,7 @@
                 <option value="PUT">PUT</option>
                 <option value="DELETE">DELETE</option>
             </select>
+            <button class="custom-create-button" data-toggle="modal" data-target="#createApiModal">Create API</button>
         </div>
         <table id="apiTable">
             <thead>
@@ -164,6 +202,7 @@
                     <th>Method</th>
                     <th>Accesses</th>
                     <th>Active</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -172,8 +211,91 @@
         </table>
     </div>
 
+    <div class="modal fade" id="createApiModal" tabindex="-1" role="dialog" aria-labelledby="createApiModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createApiModalLabel">Create API</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createApiForm">
+                        <div class="form-group">
+                            <label for="apiName">API</label>
+                            <input type="text" class="form-control" id="apiName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apiMethod">Method</label>
+                            <select class="form-control" id="apiMethod" required>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary custom-edit-button" onclick="handleEditApi()">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editApiModal" tabindex="-1" role="dialog" aria-labelledby="editApiModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editApiModalLabel">Edit API</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editApiForm">
+                        <div class="form-group">
+                            <label for="editApiName">API</label>
+                            <input type="text" class="form-control" id="editApiName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editApiMethod">Method</label>
+                            <select class="form-control" id="editApiMethod" required>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editApiAccesses">Accesses</label>
+                            <input type="number" class="form-control" id="editApiAccesses" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editApiStatus">Active</label>
+                            <select class="form-control" id="editApiStatus" required>
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="handleEditApi()">Save changes</button>
+                    <button type="button" class="btn btn-danger" onclick="handleDeleteApi()">Delete API</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let apiData = []; // To store the fetched API data
+        let editApiId = null; // To store the ID of the API being edited
 
         document.addEventListener('DOMContentLoaded', function () {
             const token = localStorage.getItem('token');
@@ -205,15 +327,28 @@
                 });
         });
 
-        function renderTable(data) {
-            console.log('Rendering table with data:', data);
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const methodSelect = document.getElementById('methodSelect').value;
 
+            let filteredData = apiData;
+
+            if (methodSelect) {
+                filteredData = filteredData.filter(api => api.method === methodSelect);
+            }
+
+            if (searchInput) {
+                filteredData = filteredData.filter(api => api.api.toLowerCase().includes(searchInput));
+            }
+
+            renderTable(filteredData); // Render the table with the filtered data
+        }
+
+        function renderTable(data) {
             const apiTable = document.getElementById('apiTable').getElementsByTagName('tbody')[0];
             apiTable.innerHTML = ''; // Clear the existing table data
 
             data.forEach(api => {
-                console.log('Rendering row for API:', api);
-
                 const row = apiTable.insertRow();
                 row.id = `row-${api.id}`; // Assign an id to each row for easy targeting
 
@@ -232,10 +367,8 @@
                 const toggleInput = document.createElement('input');
                 toggleInput.type = 'checkbox';
                 toggleInput.id = `toggle-${api.id}`;
-                toggleInput.checked = api.status && api.status.toString('hex') === '0000';
-                // Assuming status is stored as '0000'
-                toggleInput.onchange = () => {
-                    console.log('Toggle change detected for API:', api);
+                toggleInput.checked = api.status === 'true'; // Assuming status is stored as 'true' or 'false'
+                toggleInput.onchange = (event) => {
                     handleToggleChange(event, api.id);
                 };
                 const toggleSpan = document.createElement('span');
@@ -244,26 +377,14 @@
                 toggleLabel.appendChild(toggleInput);
                 toggleLabel.appendChild(toggleSpan);
                 cellActive.appendChild(toggleLabel);
+
+                const cellAction = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.classList.add('custom-edit-button');
+                editButton.onclick = () => handleEditButtonClick(api.id);
+                cellAction.appendChild(editButton);
             });
-        }
-
-
-
-        function handleSearch() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const methodSelect = document.getElementById('methodSelect').value;
-
-            let filteredData = apiData;
-
-            if (methodSelect) {
-                filteredData = filteredData.filter(api => api.method === methodSelect);
-            }
-
-            if (searchInput) {
-                filteredData = filteredData.filter(api => api.api.toLowerCase().includes(searchInput));
-            }
-
-            renderTable(filteredData); // Render the table with the filtered data
         }
 
         function handleToggleChange(event, apiId) {
@@ -313,10 +434,119 @@
                 });
         }
 
-
         function handleLogout() {
             localStorage.removeItem('token'); // Remove the token
             window.location.replace('http://localhost:3000/');
+        }
+
+        function handleCreateApi() {
+            const apiName = document.getElementById('apiName').value;
+            const apiMethod = document.getElementById('apiMethod').value;
+            const token = localStorage.getItem('token');
+
+            if (!apiName || !apiMethod) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            fetch('http://localhost:3000/createapi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ api: apiName, method: apiMethod })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 1) {
+                        $('#createApiModal').modal('hide');
+                        apiData.push(data.data); // Assuming the response contains the new API data
+                        renderTable(apiData);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating API:', error);
+                    alert('Error creating API');
+                });
+        }
+
+        function handleEditButtonClick(apiId) {
+            const api = apiData.find(api => api.id === apiId);
+            if (!api) return;
+
+            editApiId = apiId;
+            document.getElementById('editApiName').value = api.api;
+            document.getElementById('editApiMethod').value = api.method;
+            document.getElementById('editApiAccesses').value = api.accesses;
+            document.getElementById('editApiStatus').value = api.status;
+
+            $('#editApiModal').modal('show');
+        }
+
+        function handleEditApi() {
+            const apiName = document.getElementById('editApiName').value;
+            const apiMethod = document.getElementById('editApiMethod').value;
+            const apiAccesses = document.getElementById('editApiAccesses').value;
+            const apiStatus = document.getElementById('editApiStatus').value;
+            const token = localStorage.getItem('token');
+
+            if (!apiName || !apiMethod || !apiAccesses || !apiStatus) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            fetch(`http://localhost:3000/updateapi/${editApiId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ api: apiName, method: apiMethod, accesses: apiAccesses, status: apiStatus })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 1) {
+                        $('#editApiModal').modal('hide');
+                        const apiIndex = apiData.findIndex(api => api.id === editApiId);
+                        apiData[apiIndex] = { ...apiData[apiIndex], api: apiName, method: apiMethod, accesses: apiAccesses, status: apiStatus };
+                        renderTable(apiData);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating API:', error);
+                    alert('Error updating API');
+                });
+        }
+
+        function handleDeleteApi() {
+            const token = localStorage.getItem('token');
+
+            fetch(`http://localhost:3000/deleteapi/${editApiId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 1) {
+                        $('#editApiModal').modal('hide');
+                        apiData = apiData.filter(api => api.id !== editApiId);
+                        renderTable(apiData);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting API:', error);
+                    alert('Error deleting API');
+                });
         }
     </script>
 </body>

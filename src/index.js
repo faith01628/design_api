@@ -46,6 +46,7 @@ const { getLink, getLinkById, createLink, deleteLink, updateLink } = require('./
 const { getImg, create } = require('./Controller/imgController.js');
 const { viewUser } = require('./Controller/viewUserController.js');
 const { getApi, getApiById, createApi, deleteApi, updateApi, updateActiveOn, updateActiveOff } = require('./Controller/apiController.js');
+const { getBio, getBioById, createBio, deleteBio, updateBio } = require('./Controller/bioController.js');
 
 // up 1 file
 app.post('/img', upload.single('img'), create);
@@ -101,6 +102,12 @@ app.delete('/deleteapi/:id', authenticateAdminToken, deleteApi);
 app.put('/updateapi/:id', authenticateAdminToken, updateApi);
 app.put('/activeOn/:id', authenticateAdminToken, updateActiveOn);
 app.put('/activeOff/:id', authenticateAdminToken, updateActiveOff);
+
+app.get('/bio', getBio);
+app.get('/biobyid', authenticateBothTokens, getBioById);
+app.post('/createbio', upload.fields([{ name: 'imgbio' }]), createBio);
+app.delete('/deletebio/:id', authenticateAdminToken, deleteBio);
+app.put('/updatebio/:id', upload.fields([{ name: 'imgbio' }]), authenticateBothTokens, updateBio);
 
 app.post('/login', login);
 

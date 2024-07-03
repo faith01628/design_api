@@ -18,7 +18,7 @@ const getProfileData = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -66,7 +66,7 @@ const getProfileById = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -124,7 +124,7 @@ const createProfile = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -209,7 +209,7 @@ const deleteProfile = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -256,7 +256,7 @@ const updateProfile = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',

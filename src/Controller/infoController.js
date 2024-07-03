@@ -18,7 +18,7 @@ const getInfoUserData = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -63,7 +63,7 @@ const getInfoUserById = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -117,7 +117,7 @@ const createInfoUser = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -179,7 +179,7 @@ const deleteinfoUser = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -225,7 +225,7 @@ const updateinfoUser = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',

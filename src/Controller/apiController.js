@@ -17,7 +17,7 @@ const getApi = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -62,7 +62,7 @@ const getApiById = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -116,7 +116,7 @@ const createApi = async (req, res) => {
 
         const apiStatus = apicheck[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -130,7 +130,7 @@ const createApi = async (req, res) => {
 
         const { api, method } = req.body;
         const accesses = 0;
-        const status = 1;
+        const status = 'true';
 
         const query = 'INSERT INTO Api SET ?';
         const params = { api, method, accesses, status };
@@ -166,7 +166,7 @@ const deleteApi = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -212,7 +212,7 @@ const updateApi = async (req, res) => {
 
         const apiStatus = apicheck[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -260,7 +260,7 @@ const updateActiveOn = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -273,7 +273,7 @@ const updateActiveOn = async (req, res) => {
         }
 
         const { id } = req.params;
-        const status = 1;
+        const status = "true";
 
         const query = 'UPDATE Api SET status = ? WHERE id = ?';
         await executeQuery(query, [status, id]);
@@ -308,7 +308,7 @@ const updateActiveOff = async (req, res) => {
 
         const apiStatus = api[0].status.toString('hex');
 
-        if (apiStatus === '0000') {
+        if (apiStatus === 'false') {
             return res.status(401).json({
                 result: 0,
                 message: 'API has been blocked',
@@ -321,7 +321,7 @@ const updateActiveOff = async (req, res) => {
         }
 
         const { id } = req.params;
-        const status = 0;
+        const status = "false";
 
         const query = 'UPDATE Api SET status = ? WHERE id = ?';
         await executeQuery(query, [status, id]);
