@@ -50,7 +50,6 @@ const getLink = async (req, res) => {
 
 const getLinkById = async (req, res) => {
     try {
-
         let idapi = 17;
         const getapi = 'SELECT * FROM api WHERE id = ?';
         const api = await executeQuery(getapi, [idapi]);
@@ -75,23 +74,22 @@ const getLinkById = async (req, res) => {
             const updateAccessParams = [idapi];
             await executeQuery(updateAccessQuery, updateAccessParams);
         }
-
-        const { profileid } = req.body;
+        const { profileid } = req.params;
         const query = 'SELECT * FROM link WHERE profileid = ?';
         const linkData = await executeQuery(query, [profileid]);
 
         if (linkData.length === 0) {
             return res.status(404).json({
                 result: 3,
-                message: 'link not found',
+                message: 'Link not found',
                 data: [],
             });
         }
 
         res.status(200).json({
             result: 1,
-            message: 'Get link successfully',
-            data: linkData[0],
+            message: 'Get links successfully',
+            data: linkData, // Trả về tất cả các dòng dữ liệu thỏa mãn điều kiện profileid
         });
 
 

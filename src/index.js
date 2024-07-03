@@ -88,9 +88,9 @@ app.delete('/deleteprofile/:id', authenticateAdminToken, deleteProfile);
 app.put('/updateprofile/:id', upload.fields([{ name: 'avata' }, { name: 'background' }, { name: 'backgroundavata' }]), authenticateBothTokens, updateProfile);
 
 app.get('/link', authenticateAdminToken, getLink);
-app.get('/linkbydi', authenticateBothTokens, getLinkById);
+app.get('/link/:profileid', authenticateBothTokens, getLinkById);
 app.post('/createlink', authenticateBothTokens, createLink);
-app.delete('/deletelink/:id', authenticateAdminToken, deleteLink);
+app.delete('/deletelink/:id', authenticateBothTokens, deleteLink);
 app.put('/updatelink/:id', authenticateBothTokens, updateLink);
 
 app.get('/viewuser/:id', viewUser);
